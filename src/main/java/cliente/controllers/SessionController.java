@@ -10,11 +10,7 @@ import com.google.gson.JsonParser;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-/**
- * Versão do UserController sem Scanner/System.out, para ser usada pela interface gráfica.
- * Cada método recebe os dados já prontos, envia a requisição e devolve a resposta (JSON em texto).
- * Quem chama decide como mostrar o resultado.
- */
+
 public class SessionController {
 
     private final Supplier<NetworkManager> conexao;
@@ -24,10 +20,7 @@ public class SessionController {
     private volatile String tokenSessao;
     private volatile String usernameLogado;
 
-    /**
-     * @param conexao fornece o NetworkManager com o IP/porta atuais da tela
-     * @param log     recebe as linhas de log (mensagem enviada e resposta)
-     */
+
     public SessionController(Supplier<NetworkManager> conexao, Consumer<String> log) {
         this.conexao = conexao;
         this.log = log;
@@ -46,7 +39,6 @@ public class SessionController {
         return enviar(new RequestDTO("register", new CadastroDataDTO(name, username, password)));
     }
 
-    // [C] Login: guarda o token se o servidor responder 200
     public String login(String username, String password) {
         String resposta = enviar(new RequestDTO("login", new LoginDataDTO(username, password)));
         if (statusCode(resposta) == 200) {
@@ -72,7 +64,7 @@ public class SessionController {
                 new UpdateUsernameDataDTO(tokenSessao, usernameLogado, novoNome)));
     }
 
-    // [E] Atualizar senha
+
     public String atualizarSenha(String senhaAntiga, String novaSenha) {
         exigirLogin();
         return enviar(new RequestDTO("updateuserpassword",
@@ -115,9 +107,7 @@ public class SessionController {
         this.usernameLogado = null;
     }
 
-    // ---------- leitura da resposta (parse do JSON, sem depender de espaços) ----------
 
-    /** Retorna o statusCode da resposta, ou -1 se a resposta não for um JSON válido. */
     public static int statusCode(String resposta) {
         JsonObject obj = objeto(resposta);
         if (obj == null || !obj.has("statusCode") || !obj.get("statusCode").isJsonPrimitive()) {
